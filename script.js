@@ -1,76 +1,86 @@
-const number = document.querySelector('.number');
-const input = document.querySelector('.guess');
-const btnCheck = document.querySelector('.check');
-const message = document.querySelector('.message');
-const highscore = document.querySelector('.highscore');
-const btnAgain = document.querySelector('.again');
+'use strict'
 
-// generate a random number between 1-20
-let randomNum = Math.trunc(Math.random() * 20) + 1;
+// set up DOM variables
+const btnCheck = document.querySelector('.check');
+const btnAgain = document.querySelector('.again');
+const viewNumber = document.querySelector('.number');
+const inputGuess = document.querySelector('.guess');
+const viewMessage = document.querySelector('.message');
+const viewScore = document.querySelector('.score');
+const viewHighscore = document.querySelector('.highscore');
+
+// set up program variables
+let randomNumber = Math.trunc(Math.random() * 20) + 1;
 let score = 20;
-let currentHighscore = Number(highscore.textContent);
+let highscore = 0;
 btnAgain.disabled = true;
 
-function checkValue() {
-    const inputValue = input.value;
-    // check for empty input
-    if (inputValue === '') {
-        writeMessage('⛔ Please input a number!');
+btnCheck.addEventListener('click', check);
+btnAgain.addEventListener('click', resetGame);
+
+function check() {
+    // check empty input
+    const inputStr = inputGuess.value;
+    if (inputStr === '') {
+        viewMessage.textContent = '⚠️ Please enter a number!';
         return;
     }
 
-    const inputNum = Number(inputValue);
-    if (inputNum > randomNum) {
-        writeMessage('📈 Too high!');
-        decreasaeScore();
-    } else if (inputNum < randomNum) {
-        writeMessage('📉 Too Low!');
-        decreasaeScore();
-    } else {
-        declareWinner();
-
+    const inputNum = Number(inputStr);
+    if (inputNum !== randomNumber) {
+        const message = inputNum > randomNumber ? '📈 Too High!' : '📉 Too Low!';
+        viewMessage.textContent = message;
+        decreaseScore();
+        if (score === 0) {
+            declareLoser();
+        }
+        return;
     }
 
-    // check if score equal 0
-    if (score === 0) {
-        writeMessage('😭 You lose!');
-        btnCheck.disabled = true;
-    }
+    declareWinner();
 }
 
-function decreasaeScore() {
+function decreaseScore() {
     score--;
-    document.querySelector('.score').textContent = score;
+    viewScore.textContent = score;
 }
 
-function writeMessage(msg) {
-    message.textContent = msg;
+function declareLoser() {
+    btnCheck.disabled = true;
+    inputGuess.disabled = true;
+    btnAgain.disabled = false;
+    viewMessage.textContent = '😢 You lose!'
 }
 
 function declareWinner() {
-    writeMessage('🎉 You win!');
     document.querySelector('body').style.backgroundColor = '#60b347';
-    number.style.width = '30rem';
-    number.textContent = randomNum;
+    viewNumber.textContent = randomNumber;
+    viewNumber.style.width = '30rem';
+    viewMessage.textContent = '🎉 You win!'
     btnCheck.disabled = true;
+    inputGuess.disabled = true;
     btnAgain.disabled = false;
-    input.disabled = true;
-    if (score > currentHighscore) {
-        currentHighscore = score;
-        highscore.textContent = currentHighscore;
+    adjustHighscore();
+}
+
+function adjustHighscore() {
+    if (score > highscore) {
+        highscore = score;
+        viewHighscore.textContent = highscore;
     }
-
 }
 
-function reset() {
-    document.querySelector('body').style.backgroundColor = '#222';
-    number.style.width = '15rem';
-    number.textContent = '?';
-    message.textContent = 'Start Guessing...';
-    score = 20;
-    document.querySelector('.score').textContent = score;
-    btnAgain.disabled = true;
-    input.value = '';
+function resetGame() {
     btnCheck.disabled = false;
-    input.disabled = false;
+    inputGuess.disabled = false;
+    inputGuess.value = '';
+    btnAgain.disabled = true;
+    document.querySelector('body').style.backgroundColor = '#222';
+    viewNumber.style.width = '15rem';
+    viewNumber.textContent = '?';
+    viewMessage.textContent = 'Start guessing...';
+    score = 20;
+    randomNumber = Math.trunc(Math.random() * 20) + 1;
+    viewScore.textContent = '20';
 }
+
