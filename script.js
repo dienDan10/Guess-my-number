@@ -54,6 +54,7 @@ function declareWinner() {
     number.textContent = randomNum;
     btnCheck.disabled = true;
     btnAgain.disabled = false;
+    input.disabled = true;
     if (score > currentHighscore) {
         currentHighscore = score;
         highscore.textContent = currentHighscore;
@@ -71,4 +72,5 @@ function reset() {
     btnAgain.disabled = true;
     input.value = '';
     btnCheck.disabled = false;
+    input.disabled = false;
 }
